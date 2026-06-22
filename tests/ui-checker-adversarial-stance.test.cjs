@@ -12,3 +12,20 @@ test('gsd-ui-checker has an adversarial_stance with FORCE + BLOCK/FLAG/PASS (#16
   assert.match(src, /BLOCK\b/, 'missing BLOCK tier');
   assert.match(src, /FLAG\b/, 'missing FLAG tier');
 });
+
+test('gsd-ui-checker has a third-person named-persona block (#16, 2505.23840)', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'agents', 'gsd-ui-checker.md'), 'utf8');
+  // Named reviewer referred to in third person
+  assert.match(src, /The Auditor/i, 'missing named third-person reviewer "The Auditor"');
+  // Third-person verdict phrasing
+  assert.match(src, /The Auditor['']s verdict/i, "missing third-person verdict phrasing \"The Auditor's verdict\"");
+  // Objective (not hostile) framing per 2506.04975
+  assert.match(src, /independent/i, 'missing independent/objective framing');
+});
+
+test('gsd-ui-checker has an anti-capitulation rule (#16)', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'agents', 'gsd-ui-checker.md'), 'utf8');
+  assert.match(src, /anti.?capitulat/i, 'missing anti-capitulation rule');
+  // Disagreement alone is not grounds to downgrade a BLOCK
+  assert.match(src, /concrete fix/i, 'missing "concrete fix" requirement for BLOCK downgrade');
+});
