@@ -82,8 +82,8 @@ Out of scope (follow-up issues): ensemble/voting verification of executed code (
 **Fix:** insert an `<adversarial_stance>` block after `</role>` (`:25`), matching the verifier/code-reviewer format but with `ui-checker`'s native BLOCK/FLAG/PASS tiers (not BLOCKER/WARNING).
 
 **arXiv basis:**
-- [2505.23840](https://arxiv.org/abs/2505.23840) (score 96) — measuring sycophancy in multi-turn dialogue; an objective third-person expert role is the most effective mitigation.
-- [2508.18234](https://arxiv.org/abs/2508.18234) (score 95, added) — personas collapse into "helpful-assistant" mode within 3-4 turns; an explicit behavioural-rules / prohibitions block makes the stance hold (the FORCE stance's go-soft list is exactly such a block).
+- [2505.23840](https://arxiv.org/abs/2505.23840) (score 96) — "Measuring Sycophancy of Language Models in Multi-turn Dialogues" (SYCON Bench); an objective third-person expert role is the most effective mitigation.
+- ~~2508.18234~~ — *removed in arxiv.org live-verification:* that ID resolves to an unrelated paper ("Can AI Have a Personality? … Voice Therapy Training"), not the persona-durability result it was cited for. No confident replacement found; Fix 3 stands on 2505.23840 (verified, directly on point).
 
 **Acceptance:** `gsd-ui-checker` contains an `<adversarial_stance>` block with a go-soft failure list and BLOCK/FLAG/PASS classification.
 
@@ -147,7 +147,29 @@ Claim raised: *Skeleton-of-Thought (SoT) is better than Chain-of-Thought (CoT)* 
 - All cited IDs were verified to exist as `articles/<id>.md` with real-arXiv-format IDs (month ≤ 12). Scores are the corpus curator scores.
 - **Excluded as non-real-arXiv:** any corpus ID with month > 12 (e.g. `2603.*`, `2604.*`, `2605.*`) exists locally but is a corpus-internal identifier that will not resolve on arxiv.org — never cited.
 - **2507.15219** local file has corrupted frontmatter (`id:"n"`); the citation is valid (content matches PromptArmor) but flagged.
-- Re-verification net changes: **+** 2504.20472, 2503.00061 (Fix 1); **+** 2503.06139, 2507.11662 (Fix 2), **−** 2506.16064; **+** 2508.18234 (Fix 3); **+** 2505.14810, reordered primary (Fix 4); **+** 2504.00406, 2508.15754, demoted 2510.15955, **rejected** 2504.07646 (Fix 5).
+- Re-verification net changes: **+** 2504.20472, 2503.00061 (Fix 1); **+** 2503.06139, 2507.11662 (Fix 2), **−** 2506.16064; **+** 2505.14810, reordered primary (Fix 4); **+** 2504.00406, 2508.15754, demoted 2510.15955, **rejected** 2504.07646 (Fix 5).
+
+## Live arxiv.org verification (2026-06-22)
+
+Every cited ID was fetched from `https://arxiv.org/abs/<id>`. **All resolved (no 404s).** 15/16 matched the claimed topic against the real English title; **1 mismatch removed** (`2508.18234` → unrelated "Can AI Have a Personality? … Voice Therapy Training"; dropped from Fix 3). Final verified links with real titles:
+
+| Fix | arXiv | Real title (arxiv.org) |
+|-----|-------|------------------------|
+| #12 | [2506.05739](https://arxiv.org/abs/2506.05739) | To Protect the LLM Agent Against the Prompt Injection Attack with Polymorphic Prompt |
+| #12 | [2507.15219](https://arxiv.org/abs/2507.15219) | PromptArmor: Simple yet Effective Prompt Injection Defenses |
+| #12 | [2504.20472](https://arxiv.org/abs/2504.20472) | Robustness via Referencing: Defending against Prompt Injection Attacks by Referencing the Executed Instruction |
+| #12 | [2503.00061](https://arxiv.org/abs/2503.00061) | Adaptive Attacks Break Defenses Against Indirect Prompt Injection Attacks on LLM Agents |
+| #5/#25 | [2503.06139](https://arxiv.org/abs/2503.06139) | GRP: Goal-Reversed Prompting for Zero-Shot Evaluation with LLMs |
+| #5/#25 | [2507.11662](https://arxiv.org/abs/2507.11662) | Let's Think in Two Steps: Mitigating Agreement Bias in MLLMs with Self-Grounded Verification |
+| #5/#25 | [2507.10124](https://arxiv.org/abs/2507.10124) | Could you be wrong: Debiasing LLMs using a metacognitive prompt … |
+| #5/#25 | [2507.02778](https://arxiv.org/abs/2507.02778) | Self-Correction Bench: Uncovering and Addressing the Self-Correction Blind Spot in LLMs |
+| #16 | [2505.23840](https://arxiv.org/abs/2505.23840) | Measuring Sycophancy of Language Models in Multi-turn Dialogues |
+| #8 | [2504.05081](https://arxiv.org/abs/2504.05081) | The Curse of CoT: On the Limitations of Chain-of-Thought in In-Context Learning |
+| #8 | [2505.11423](https://arxiv.org/abs/2505.11423) | When Thinking Fails: The Pitfalls of Reasoning for Instruction-Following in LLMs |
+| #8 | [2505.14810](https://arxiv.org/abs/2505.14810) | Scaling Reasoning, Losing Control: Evaluating Instruction Following in Large Reasoning Models |
+| #10 | [2504.00406](https://arxiv.org/abs/2504.00406) | VerifiAgent: a Unified Verification Agent in Language Model Reasoning |
+| #10 | [2508.15754](https://arxiv.org/abs/2508.15754) | Dissecting Tool-Integrated Reasoning: An Empirical Study and Analysis |
+| #10 | [2510.15955](https://arxiv.org/abs/2510.15955) | How Good Are LLMs at Processing Tool Outputs? (corpus title was a paraphrase; topic confirmed) |
 
 ---
 
