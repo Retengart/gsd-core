@@ -28,7 +28,7 @@ Out of scope (follow-up issues): ensemble/voting verification of executed code (
 
 - **Config key for opt-in blocking:** `security.injection_blocking` in `.planning/config.json`, read by the hook as `c.security?.injection_blocking === true`. Default absent/`false` ⇒ advisory (current behaviour preserved). *Deviation note:* existing hook-read flags use the `hooks.*` namespace (`hooks.community`, `hooks.context_warnings`); we introduce `security.*` because it is semantically clearer for a security gate and was the approved name.
 - **Laundering path:** closed at *ingress* (scan WebFetch/WebSearch output) + *prompt isolation*, NOT by removing the deliberate `.planning/` read-scan exclusion (that exclusion exists to avoid false positives and is left intact).
-- **No runtime nonce in static prompts:** prompt isolation uses GSD's existing static `DATA_START/DATA_END` markers + a "treat as data" directive. Per-invocation randomised delimiters (PPA's strongest form) require orchestrator-side wrapping — recorded as future work, not in this pass.
+- **Randomised markers (updated in Phase 2):** prompt isolation initially used static `DATA_START/DATA_END` markers; Phase 2 upgraded the shared reference to instruct the agent to generate a **fresh random delimiter per wrap** (honest PPA), plus a self-scan and task-anchor. See "Phase 2 — citation-honesty upgrades" below.
 - **Hooks stay advisory by default** — non-breaking. Blocking is strictly opt-in.
 - **Patterns are inlined in hooks** "for hook independence" (existing convention); the source of truth `src/security.cts` is mirrored. We follow this convention rather than refactoring hooks to `require()` the compiled module.
 
@@ -65,8 +65,9 @@ Out of scope (follow-up issues): ensemble/voting verification of executed code (
 **Fix:** new shared reference `gsd-core/references/verdict-self-check.md`; `@`-include it and add one numbered self-check step immediately before the final verdict in `gsd-verifier`, `gsd-plan-checker`, and `gsd-code-reviewer`. The step: *if leaning PASS, name the single most likely reason this is a false PASS; if leaning FAIL/BLOCKER, name the strongest argument it is actually acceptable; adjust if warranted.*
 
 **arXiv basis:**
-- [2503.06139](https://arxiv.org/abs/2503.06139) (score 98, added — now primary) — Goal-Reversal Prompting: asking for the *worst* option instead of the best forces critical analysis and cuts position bias — the most precise mechanic for a judge hunting its own false-PASS.
-- [2507.11662](https://arxiv.org/abs/2507.11662) (score 92, added) — Self-Grounded Verification: LLMs rationalise a bad idea (agreement bias); make the judge define the ideal rubric *blindly* before seeing the work so it can't retrofit a PASS.
+- ~~2503.06139 Goal-Reversal~~ — **dropped in Phase 2**: GRP is a *pairwise* "pick the worst" mechanic; a single-artifact gate has no pairwise choice, so the citation was mechanistically wrong (re-audit finding).
+- [2507.11662](https://arxiv.org/abs/2507.11662) (score 92, **now implemented in Phase 2**) — Self-Grounded Verification: the judge defines pass-criteria *blindly before* seeing the work so it can't retrofit a PASS. (Phase 1 ran the check post-hoc — the inverse; Phase 2 added the blind-criteria-first step.)
+- [2507.10124](https://arxiv.org/abs/2507.10124) (score 98, **primary**) — metacognitive "could you be wrong" post-hoc self-check — the actual basis of the kept self-check step.
 - [2507.10124](https://arxiv.org/abs/2507.10124) (score 98) — LLMs hide counter-arguments to their own conclusion in the first answer; an explicit prompt surfaces them.
 - [2507.02778](https://arxiv.org/abs/2507.02778) (score 96) — Self-Correction Bench: the "self-correction blind spot"; models defend their own output ("Wait" trigger ≈90% fix).
 - *Dropped in re-verification:* ~~2506.16064~~ — generic self-critique, not judge/verdict-specific; superseded by 2503.06139 + 2507.11662.
@@ -181,3 +182,17 @@ Every cited ID was fetched from `https://arxiv.org/abs/<id>`. **All resolved (no
 - **Run:** `node scripts/run-tests.cjs --suite security` and `--suite unit`.
 - **Changesets:** 1× `Security` (Fix 1), 3× `Fixed` (Fix 2-4), 1× `Changed` (Fix 5). `Changed` requires a `docs/` edit (Fix 5 → eval reference / COMMANDS). Fix 1 docs already in `security-model.md`.
 - **No default flips.** No localized-doc parity debt (localized `security-model.md` updated in this PR).
+
+---
+
+## Phase 2 — citation-honesty upgrades (2026-06-22)
+
+A per-fix re-audit (reading the actual papers) found several citations were *topically* matched but described mechanisms the implementation didn't build. Rather than weaken the citations, the implementation was upgraded to **build what each paper describes**, so the citation is honest by construction. Also surfaced: the corpus's arxiv ID→paper mapping is unreliable — **3 more candidate IDs (2505.13028, 2503.04722, 2510.15585) were live-checked and rejected** as mismatches (they resolve to unrelated real papers); only live-verified IDs are cited.
+
+- **#12 injection** — implemented **randomized per-wrap delimiters** (honest PPA [2506.05739]), an in-prompt **self-guard self-scan** before using fetched text (honest PromptArmor [2507.15219]), and **task-anchoring** (honest Referencing [2504.20472]); the regex hook is relabeled honestly as a pattern pre-filter. Keeps [2503.00061] (defense-in-depth, advisory default).
+- **#5 critics** — implemented **blind pass-criteria-first** (real SGV [2507.11662]); kept the post-hoc metacognitive self-check ([2507.10124], primary) + blind-spot motivation ([2507.02778]). **Dropped GRP 2503.06139** (pairwise "pick worst" — no pairwise choice in a single-artifact gate; mechanistically wrong).
+- **#16 ui-checker** — added the **third-person objective named persona** the paper actually validates ([2505.23840]) + anti-capitulation rule; objective-not-hostile per [2506.04975]. FORCE stance kept as complement.
+- **#8 extractors** — added **few-shot input→output exemplars** (the real lever in [2504.05081]) + **terminal schema restatement** ([2506.00069]); removed the anti-JSON-reasoning overclaim ([2505.11423] scoped correctly to simple mechanical constraints).
+- **#10 eval verb** — citations strengthened: added [2601.15130] (Plausibility Trap / DPDM — the exact "take deterministic high-cost computation out of the LLM" result) and [2507.10281] (Table Agent — re-runnable code beats re-asking); [2508.15754] TIR principle anchor; [2504.00406]/[2510.15955] demoted to supporting. (No code change — the fixed verb was already best-in-class.)
+
+New live-verified IDs added this phase: 2503.05061, 2502.10709, 2503.23989, 2503.05142, 2506.04975, 2507.15152, 2506.00069, 2507.10281, 2601.15130. Removed: 2503.06139 (GRP, dropped), 2508.18234 (mismatch, removed in phase 1).
