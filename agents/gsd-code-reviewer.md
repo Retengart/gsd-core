@@ -180,6 +180,23 @@ Body: "No source files to review after filtering. All files in scope are documen
 NOTE: `status: clean` means "reviewed and found no issues." `status: skipped` means "no reviewable files — review was not performed." This distinction matters for downstream consumers.
 </step>
 
+<step name="define_pass_criteria">
+**Define pass-criteria BEFORE the review pass (SGV — 2507.11662)**
+
+Before examining any file's content, state the concrete pass-condition for each must-check category — the exact behaviors that must hold for a finding to be raised. This prevents the standard from drifting to whatever the code happens to do.
+
+```
+For each active check category (bugs / security / quality):
+  - Pass-condition: [specific pattern or invariant that must hold]
+  - Would flag as BLOCKER if: [concrete violation, e.g. "user input reaches SQL query unsanitized"]
+  - Would flag as WARNING if: [degraded-quality condition, e.g. "async function missing await/catch"]
+```
+
+Record these criteria before opening any file. They are fixed — do not soften a finding after reading the code unless the strongest counter-argument (verdict self-check, below) genuinely holds.
+
+*(Post-hoc verdict self-check before write_review is separate and complementary — 2507.10124.)*
+</step>
+
 <step name="review_by_depth">
 Branch on depth level:
 

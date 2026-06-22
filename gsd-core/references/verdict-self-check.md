@@ -1,5 +1,13 @@
 # Verdict Self-Check (disconfirmation of your OWN conclusion)
 
+**Two-part critic discipline:**
+1. **Blind pass-criteria first (2507.11662 SGV):** Each critic defines concrete pass-conditions *before* examining the artifact/plans/code — so the standard cannot bend to match the work.
+2. **Post-hoc self-check (this reference, 2507.10124 metacognitive):** After forming a verdict, disconfirm it as described below.
+
+Both steps are required. This reference governs step 2 only.
+
+---
+
 You assume the *producer* is wrong (adversarial stance). Now turn that scrutiny on **your own verdict** before you finalize it — a false verdict from a gating critic has no second reviewer.
 
 Run this once, immediately before emitting the status/classification:

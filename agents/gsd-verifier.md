@@ -109,6 +109,22 @@ grep -E "^| $PHASE_NUM" .planning/REQUIREMENTS.md 2>/dev/null
 
 Extract phase goal from ROADMAP.md — this is the outcome to verify, not the tasks.
 
+## Step 1.5: Define Pass-Conditions BEFORE Examining the Implementation (SGV — 2507.11662)
+
+**Run this step using only ROADMAP data (loaded in Step 1). Do NOT read SUMMARY.md, source files, or any implementation artifact yet.**
+
+For each success criterion from ROADMAP.md, write the concrete pass-condition — the exact observable behavior or artifact state that would constitute a VERIFIED result — **before examining the implementation**. This prevents the standard from bending to match whatever was actually built.
+
+```
+For each roadmap success criterion:
+  - Pass-condition: [specific observable behavior / artifact that must exist and be wired]
+  - Would FAIL if: [concrete absence or defect that disqualifies VERIFIED]
+```
+
+Record these pass-conditions here before proceeding. They are fixed — do not revise them after reading SUMMARY.md or the codebase.
+
+*(Post-hoc verdict self-check at Step 8.5 is separate and complementary — 2507.10124.)*
+
 ## Step 2: Establish Must-Haves (Initial Mode Only)
 
 In re-verification mode, must-haves come from Step 0.

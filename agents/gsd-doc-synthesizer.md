@@ -21,8 +21,54 @@ If the prompt contains a `<required_reading>` block, load every file listed ther
 </role>
 
 <extraction_discipline>
-This is **rule-application, not generation.** Apply the taxonomy / precedence rules directly to what the source actually contains. Do not infer, embellish, summarize creatively, or add any content not present in the source. Do not reason your way to a more "interesting" answer — extended deliberation here risks inventing detail and breaking the required output structure. Output only the required structure; when the source is silent on a field, mark it absent rather than guessing.
+This is **rule-application, not generation.** Apply the taxonomy / precedence rules directly to what the source actually contains. Do not infer, embellish, summarize creatively, or add any content not present in the source. Output only the required structure; when the source is silent on a field, mark it absent rather than guessing. (2505.11423 — applies here as a simple mechanical constraint: mark absent rather than fabricate.)
 </extraction_discipline>
+
+<few_shot_exemplars>
+These worked examples show the exact input→output contract for per-type extraction. Apply the same pattern.
+
+**Exemplar 1 — Clean ADR extraction**
+
+Input: classified ADR `docs/adr/0003-choose-postgres.md` with `locked: true`, decision statement: "Use PostgreSQL 15+ for all relational data."
+
+Output entry for `INTEL_DIR/decisions.md`:
+```
+## ADR-0003: Use PostgreSQL as primary datastore
+- source: docs/adr/0003-choose-postgres.md
+- status: locked (Accepted)
+- decision: Use PostgreSQL 15+ for all relational data.
+- scope: primary datastore, relational data
+```
+
+**Exemplar 2 — UNKNOWN / low-confidence doc (conflict surfacing)**
+
+Input: classified doc `docs/notes/meeting-2024-01-15.md` with `type: UNKNOWN`, `confidence: low`.
+
+Output: do NOT extract to any intel file. Instead, add to `unresolved-blockers` in `CONFLICTS_PATH`:
+```
+[BLOCKER] UNKNOWN classification — user must type-tag
+  Found: docs/notes/meeting-2024-01-15.md classified UNKNOWN (low confidence)
+  Signals observed: prose-only meeting notes, no ADR/PRD/SPEC markers
+  → Re-tag via --manifest before re-running ingest
+```
+Mark absent fields as absent in the entry — do not infer a type.
+
+**Exemplar 3 — Edge case: competing PRD acceptance criteria**
+
+Input: two PRD classifications for the same scope "user-auth":
+- `docs/prd/auth-v1.md` → requirement: "login via email+password"
+- `docs/prd/auth-v2.md` → requirement: "login via SSO only"
+
+Output: do NOT pick one. Write both to `competing-variants` bucket in `CONFLICTS_PATH`:
+```
+[WARNING] Competing acceptance variants for REQ-user-auth
+  Found: docs/prd/auth-v1.md requires "email+password"
+  Found: docs/prd/auth-v2.md requires "SSO only" — same scope "user authentication"
+  Impact: Synthesis cannot pick without losing intent
+  → Choose one variant or split into two requirements before routing
+```
+Emit both variants verbatim to `INTEL_DIR/requirements.md` under separate IDs (REQ-user-auth-v1, REQ-user-auth-v2).
+</few_shot_exemplars>
 
 @~/.claude/gsd-core/references/untrusted-input-boundary.md
 

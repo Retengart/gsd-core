@@ -1,13 +1,18 @@
 #!/usr/bin/env node
 // gsd-hook-version: {{GSD_VERSION}}
 // GSD Read Injection Scanner — PostToolUse hook (#2201)
-// Scans file content returned by the Read tool for prompt injection patterns.
-// Catches poisoned content at ingestion before it enters conversation context.
+// Pattern-based pre-filter / blocklist: scans content returned by Read, WebFetch,
+// and WebSearch for known prompt-injection patterns (regex + heuristic rules).
+// This is a static pattern match — NOT a semantic guard, NOT PromptArmor.
+// It does NOT understand context, intent, or novel phrasing; it catches
+// known injection signatures at ingestion before they enter conversation context.
 //
 // Defense-in-depth: long GSD sessions hit context compression, and the
 // summariser does not distinguish user instructions from content read from
 // external files. Poisoned instructions that survive compression become
 // indistinguishable from trusted context. This hook warns at ingestion time.
+// Prompt-level self-guard and task-anchor controls (untrusted-input-boundary.md)
+// operate independently as a complementary layer.
 //
 // Triggers on: Read, WebFetch, WebSearch PostToolUse events
 // Action: Advisory warning by default; blocks HIGH only when security.injection_blocking=true

@@ -709,6 +709,22 @@ gsd_run query phase.list-artifacts "$phase_number" --type summary
 
 **Extract:** Phase goal, requirements (decompose goal), locked decisions, deferred ideas.
 
+## Step 1.5: Define Pass-Conditions BEFORE Reading the Plans (SGV — 2507.11662)
+
+**Run this step using only the ROADMAP data loaded in Step 1. Do NOT read any PLAN.md file yet.**
+
+For each phase requirement, write the concrete pass-condition — what a plan must contain and describe for the requirement to be considered covered — **before reading the plans**. This prevents the standard from drifting to match whatever the planner chose to write.
+
+```
+For each requirement:
+  - Pass-condition: [specific task coverage / artifact / wiring the plan must describe]
+  - Would FAIL if: [missing task, vague action, absent key link, or scope reduction]
+```
+
+Record these pass-conditions before proceeding to Step 2. They are fixed — do not revise them after reading PLAN.md.
+
+*(Post-hoc verdict self-check at Step 9.5 is separate and complementary — 2507.10124.)*
+
 ## Step 2: Load All Plans
 
 Use `gsd-tools query` to validate plan structure:
