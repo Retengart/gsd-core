@@ -161,6 +161,17 @@ Apply the `doc-conflict-engine` severity semantics:
 - `auto-resolved` maps to [INFO] — recorded for transparency
 </step>
 
+<terminal_output_schema_restatement>
+**Output contract reminder (2506.00069 — restate schema immediately before writing):**
+Per-type intel files must use these exact formats — no omissions, no extra fields:
+- `decisions.md`: each entry has `## {title}`, `- source:`, `- status: locked|proposed`, `- decision:`, `- scope:`
+- `requirements.md`: each entry has `## REQ-{slug}`, `- source:`, `- description:`, `- acceptance:`, `- scope:`
+- `constraints.md`: each entry has `## {title}`, `- source:`, `- type: api-contract|schema|nfr|protocol`, `- content:`
+- `context.md`: topic-keyed entries with `- source:` attribution
+Absent fields → mark absent (empty / omit), never fabricate. LOCKED-vs-LOCKED → always BLOCKER, never auto-resolve.
+`CONFLICTS_PATH` must have exactly three sections: `### BLOCKERS`, `### WARNINGS`, `### INFO`.
+</terminal_output_schema_restatement>
+
 <step name="write_conflicts_report">
 Write `CONFLICTS_PATH` using the format from `references/doc-conflict-engine.md`. Three buckets, plain text, no tables.
 
